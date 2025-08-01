@@ -7,11 +7,15 @@
     "type": "git",
     "url": "https://github.com/vestedimpact/examples.git"
   },
+  "scripts": {
+    "start": "ts-node ./index.ts"
+  },
   "dependencies": {
     "exceljs": "^4.4.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }
