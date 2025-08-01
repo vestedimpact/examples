@@ -1,0 +1,17 @@
+{
+  "name": "@vested-impact/examples",
+  "version": "1.0.0",
+  "description": "Example code detailing how the Vested Impact data API can be used",
+  "author": "Daniel White <daniel@vestedimpact.co.uk>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vestedimpact/examples.git"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.3"
+  }
+}
