@@ -17,4 +17,5 @@ To use the Vested Impact Data API you must:
 |----------------|----------|
 | `api`          | Example classes which connect to the Vested Impact Data API using fetch. They demonstrate common use cases of the API but do not contain error handling and are not production ready. |
 | `excel-output` | Code which utilises [ExcelJS](https://www.npmjs.com/package/exceljs) to output data from the API into Excel workbooks which can be consumed by users. |
+| `pdf-output`   | Code which utilises [ReactPDF](https://react-pdf.org/) to generate visuals and sections of the PDF report from asset impact data. |
 | `utils`        | Utility code we think could be useful to you. Including ESRS and UN SDG utilities. |
