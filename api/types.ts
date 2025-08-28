@@ -266,6 +266,7 @@ export type AssetImpact = {
     }[];
     weight: number;
   }[];
+  industry: string;
   negativeImpact: number;
   opportunities: {
     E: Opportunity[];
