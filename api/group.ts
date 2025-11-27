@@ -1,22 +1,22 @@
-import { AssetGroup, AssetGroupCreateInput, AssetGroupHoldings, AssetGroupImpact, AssetGroupImpactHistory, ImpactCalculationStatus } from './types';
+import { Group, GroupCreateInput, GroupHoldings, GroupImpact, GroupImpactHistory, ImpactCalculationStatus } from './types';
 
 const delay1Second = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 /**
  * An example class demonstrating use cases for the Vested Impact data API using fetch.
- * This class focusses on asset group operations
+ * This class focusses on group operations
  * 
  * @param apiKey Your Vested Impact API key.
  */
-export class VestedImpactAssetGroupAPI {
-  private readonly apiUrl = 'https://api.vestedimpact.co.uk/v2/asset-group';
+export class VestedImpactGroupAPI {
+  private readonly apiUrl = 'https://api.vestedimpact.co.uk/v2/group';
 
   constructor(private readonly apiKey: string) { }
 
   /**
-   * Create a new asset group.
+   * Create a new group.
    */
-  async createAssetGroup(group: AssetGroupCreateInput) {
+  async createGroup(group: GroupCreateInput) {
     const createResponse = await fetch(
       this.apiUrl,
       {
@@ -25,13 +25,13 @@ export class VestedImpactAssetGroupAPI {
         method: 'POST',
       },
     );
-    return (await createResponse.json()) as AssetGroup;
+    return (await createResponse.json()) as Group;
   }
 
   /**
-   * Update asset group holdings and schedule impact calculation.
+   * Update group holdings and schedule impact calculation.
    */
-  async generateGroupImpact(groupId: string, holdings: AssetGroupHoldings) {
+  async generateGroupImpact(groupId: string, holdings: GroupHoldings) {
     /* Update group holdings */
     await fetch(
       `${this.apiUrl}/id/${groupId}/holdings`,
@@ -57,43 +57,43 @@ export class VestedImpactAssetGroupAPI {
       calculationStatus = ((await statusResponse.json()) as ImpactCalculationStatus).status;
     }
     if (calculationStatus !== 'COMPLETED') {
-      /* Handle error in calculation, likely due to missing or misconfigured basics/breakdown data */
+      /* Handle error in calculation, likely due to missing or misconfigured holdings data */
     }
   }
 
   /**
-   * Fetch asset group data.
+   * Fetch group data.
    */
-  async getAssetGroup(groupId: string) {
+  async getGroup(groupId: string) {
     const response = await fetch(
       `${this.apiUrl}/id/${groupId}`,
       { headers: { 'api-key': this.apiKey }, method: 'GET' },
     );
-    return (await response.json()) as AssetGroup;
+    return (await response.json()) as Group;
   }
 
   /**
-   * Fetch impact history for an asset group.
+   * Fetch impact history for a group.
    * This includes the id of each impact report which can be used to retrieve the full report data.
    */
-  async getAssetGroupImpactHistory(groupId: string) {
+  async getGroupImpactHistory(groupId: string) {
     const response = await fetch(
       `${this.apiUrl}/id/${groupId}/impact/history`,
       { headers: { 'api-key': this.apiKey }, method: 'GET' },
     );
-    return (await response.json()) as AssetGroupImpactHistory;
+    return (await response.json()) as GroupImpactHistory;
   }
 
   /**
-   * Fetch impact data for an asset group.
+   * Fetch impact data for a group.
    * If the reportId is provided a specific report from the groups history will be returned.
    * Else the most recent data will be returned.
    */
-  async getAssetGroupImpactReport(groupId: string, reportId?: string) {
+  async getGroupImpactReport(groupId: string, reportId?: string) {
     const response = await fetch(
       reportId ? `${this.apiUrl}/id/${groupId}/impact/id/${reportId}` : `${this.apiUrl}/id/${groupId}/impact/current`,
       { headers: { 'api-key': this.apiKey }, method: 'GET' },
     );
-    return (await response.json()) as AssetGroupImpact;
+    return (await response.json()) as GroupImpact;
   }
 }

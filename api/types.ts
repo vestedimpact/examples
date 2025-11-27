@@ -329,147 +329,127 @@ export type AssetSearchResults = {
   query: string;
 };
 
-export type AssetGroup = {
+type GroupHolding = {
+  id: string;
+  name: string;
+  type: 'ASSET' | 'GROUP';
+  weight: number;
+};
+
+export type Group = {
   description?: string;
-  holdings: {
-    hasImpact: boolean;
-    id: string;
-    name: string;
-    weight: number;
-  }[];
+  holdings: GroupHolding[];
   id: string;
   name: string;
   owner: string;
 };
 
-export type AssetGroupCreateInput = {
+export type GroupCreateInput = {
   description: string;
   name: string;
   owner: string;
 };
 
-export type AssetGroupHoldings = {
-  holdings: {
-    id: string;
-    weight: number;
-  }[];
+export type GroupHoldings = {
+  holdings: Omit<GroupHolding, 'name'>[];
 };
 
-type GroupHoldingImpactStats = {
-  max: number;
-  maxWeighted: number;
-  mean: number;
-  meanWeighted: number;
-  median: number;
-  medianWeighted: number;
-  min: number;
-  minWeighted: number;
-};
-
-type GroupHoldingImpact = {
-  id: string;
-  maxImpact: number;
-  name: string;
+type GroupHoldingImpact = GroupHolding & {
   negativeImpact: number;
-  negativePercent: number;
   positiveImpact: number;
-  positivePercent: number;
-  weight: number;
 };
 
-type GroupFlag = {
-  holdings: {
-    countries: {
-      activity: string;
-      country: string;
-    }[];
-    id: string;
-    name: string;
-    weight: number;
-  }[];
-  type: string;
+type GroupHoldingImpactWithHoldingWeight = GroupHoldingImpact & {
+  holdingWeight: number;
 };
 
-type GroupESGSummary = {
-  count: number;
-  financialMateriality: {
-    high: number;
-    low: number;
-    medium: number;
-    veryHigh: number;
-    veryLow: number;
-  };
-  holdings: {
-    id: string;
-    items: {
-      esrs: string;
-      financialMateriality: string;
-      impactMateriality: string;
-      impactScore: number;
-      sdgTarget: string;
-    }[];
-    name: string;
-    weight: number;
-  }[];
-  impactMateriality: {
+type GroupMaterialityMatrix = {
+  veryHigh: {
+    veryLarge: number;
     large: number;
     moderate: number;
     small: number;
+  };
+  high: {
     veryLarge: number;
+    large: number;
+    moderate: number;
+    small: number;
+  };
+  medium: {
+    veryLarge: number;
+    large: number;
+    moderate: number;
+    small: number;
+  };
+  low: {
+    veryLarge: number;
+    large: number;
+    moderate: number;
+    small: number;
+  };
+  veryLow: {
+    veryLarge: number;
+    large: number;
+    moderate: number;
+    small: number;
   };
 };
 
-export type AssetGroupImpact = {
+export type GroupImpact = {
   esgSummary: {
     E: {
-      count: number;
-      opportunities: GroupESGSummary;
-      risks: GroupESGSummary;
+      opportunities: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
+      risks: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
     };
     S: {
-      count: number;
-      opportunities: GroupESGSummary;
-      risks: GroupESGSummary;
+      opportunities: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
+      risks: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
     };
     G: {
-      count: number;
-      opportunities: GroupESGSummary;
-      risks: GroupESGSummary;
+      opportunities: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
+      risks: {
+        holdings: (GroupHolding & { materiality: GroupMaterialityMatrix })[];
+        materiality: GroupMaterialityMatrix;
+      };
     };
   };
-  flaggedOpportunities: GroupFlag[];
-  flaggedRisks: GroupFlag[];
-  holdingImpacts: {
-    holdings: {
-      id: string;
-      name: string;
-      negativeImpact: number;
-      negativeImpactWeighted: number;
-      positiveImpact: number;
-      positiveImpactWeighted: number;
-      vestedImpactRating: string;
-      vestedImpactScore: number;
-      vestedImpactScoreWeighted: number;
-      weight: number;
-    }[];
-    impactWeight: number;
-    negativeStats: GroupHoldingImpactStats;
-    positiveStats: GroupHoldingImpactStats;
-    totalWeight: number;
-    withoutImpact: number;
-  };
+  flaggedOpportunities: {
+    holdings: (GroupHolding & { count: number })[];
+    type: string;
+  }[];
+  flaggedRisks: {
+    holdings: (GroupHolding & { count: number })[];
+    type: string;
+  }[];
+  holdingImpacts: (GroupHoldingImpact & {
+    vestedImpactRating: string;
+    vestedImpactScore: number;
+  })[];
   industryImpacts: {
     activities: {
       activity: string;
-      holdings: (GroupHoldingImpact & {
-        activityWeight: number;
-      })[];
+      holdings: GroupHoldingImpactWithHoldingWeight[];
       negativeImpact: number;
-      negativeStats: GroupHoldingImpactStats;
       positiveImpact: number;
-      positiveStats: GroupHoldingImpactStats;
       weight: number;
     }[];
+    holdings: GroupHoldingImpactWithHoldingWeight[];
     industry: string;
     negativeImpact: number;
     positiveImpact: number;
@@ -478,12 +458,7 @@ export type AssetGroupImpact = {
   metrics: {
     category: string;
     description: string;
-    holdings: {
-      id: string;
-      name: string;
-      value?: number;
-      weight: number;
-    }[];
+    holdings: (GroupHolding & { value?: number })[];
     method: string;
     name: string;
     units: string;
@@ -493,15 +468,13 @@ export type AssetGroupImpact = {
   regionImpacts: {
     countries: {
       country: string;
-      holdings: (GroupHoldingImpact & {
-        countryWeight: number;
-      })[];
+      countryCode: string;
+      holdings: GroupHoldingImpactWithHoldingWeight[];
       negativeImpact: number;
-      negativeStats: GroupHoldingImpactStats;
       positiveImpact: number;
-      positiveStats: GroupHoldingImpactStats;
       weight: number;
     }[];
+    holdings: GroupHoldingImpactWithHoldingWeight[];
     region: string;
     negativeImpact: number;
     positiveImpact: number;
@@ -509,32 +482,25 @@ export type AssetGroupImpact = {
   }[];
   reportDate: string;
   sdgImpacts: {
-    holdings: (GroupHoldingImpact & {
-      activities: string[];
-    })[];
+    holdings: GroupHoldingImpact[];
     negativeImpact: number;
-    negativeStats: GroupHoldingImpactStats;
     positiveImpact: number;
-    positiveStats: GroupHoldingImpactStats;
     sdgGoal: string;
     targets: {
-      holdings: (GroupHoldingImpact & {
-        activities: string[];
-      })[];
+      holdings: GroupHoldingImpact[];
       negativeImpact: number;
-      negativeStats: GroupHoldingImpactStats;
       positiveImpact: number;
-      positiveStats: GroupHoldingImpactStats;
       sdgTarget: string;
       weight: number;
     }[];
     weight: number;
   }[];
+  totalWeight: number;
   vestedImpactRating: string;
   vestedImpactScore: number;
 };
 
-export type AssetGroupImpactHistory = {
+export type GroupImpactHistory = {
   reports: {
     id: string;
     negativeImpact: number;
@@ -546,7 +512,7 @@ export type AssetGroupImpactHistory = {
   }[];
 };
 
-export type AssetGroupSearchResults = {
+export type GroupSearchResults = {
   results: {
     id: string;
     name: string;
